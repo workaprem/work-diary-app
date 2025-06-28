@@ -1,0 +1,41 @@
+workflows:
+  android-workflow:
+    name: Android Workflow
+    max_build_duration: 120
+    environment:
+      android_signing:
+        - keystore_reference
+      groups:
+        - google_play
+      vars:
+        PACKAGE_NAME: "com.workdiary.app"
+        GOOGLE_PLAY_TRACK: "internal"
+    scripts:
+      - name: Install dependencies
+        script: |
+          cd work-diary-app-frontend
+          npm install -g pnpm
+          pnpm install
+      - name: Build web app
+        script: |
+          cd work-diary-app-frontend
+          pnpm run build
+      - name: Setup Android project
+        script: |
+          # إنشاء مشروع Android WebView
+          # يمكن استخدام Capacitor أو Cordova
+          npm install -g @capacitor/cli
+          npx cap init "Work Diary" "com.workdiary.app"
+          npx cap add android
+          npx cap copy
+          npx cap sync
+      - name: Build Android APK
+        script: |
+          cd android
+          ./gradlew assembleRelease
+    artifacts:
+      - android/app/build/outputs/**/*.apk
+    publishing:
+      email:
+        recipients:
+          - your-ahmed.muhajir11@gmail.com

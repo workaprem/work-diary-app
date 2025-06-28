@@ -1,0 +1,30 @@
+// Firestore Security Rules
+// نسخ هذه القواعد إلى Firebase Console > Firestore Database > Rules
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // قواعد مجموعة يوميات العمل
+    match /workDiary/{documentId} {
+      allow read, write: if request.auth != null 
+        && request.auth.uid == resource.data.userId;
+      allow create: if request.auth != null 
+        && request.auth.uid == request.resource.data.userId;
+    }
+    
+    // قواعد مجموعة الاشتراكات
+    match /subscriptions/{userId} {
+      allow read, write: if request.auth != null 
+        && request.auth.uid == userId;
+      allow create: if request.auth != null 
+        && request.auth.uid == request.resource.data.userId;
+    }
+    
+    // منع الوصول لأي مجموعات أخرى
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+
