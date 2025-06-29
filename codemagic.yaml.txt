@@ -38,4 +38,4 @@ workflows:
     publishing:
       email:
         recipients:
-          - your-ahmed.muhajir11@gmail.com
+          - ahmed.muhajir11@gmail.com
